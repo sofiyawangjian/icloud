@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="icloud.css">
+	<script src="angular.js"></script>
+
+</head>
+<body>
+	<div class="container" ng-controller='cl'>
+		 <div class="left">
+		    <div class="logo">
+		    	<div class="logoleft">iCloud<a href="#">提醒事项</a></div>
+		    	<div class="jia" ng-click="add()">
+		    	     <div class="heng"></div>
+		    	     <div class="shu"></div>
+		        </div>
+
+		    </div>
+		    <div class="list">
+		       	     <ul>
+		       	     	<li  ng-repeat='val in todo' ng-click="select($index)" ng-style="{background:$index==index?'#2D2D2B':''}">
+		       	     		<span ng-style='{background:val.col}'></span>
+		       	     		<h3>{{val.title}}</h3>
+		       	     	</li>
+		       	     </ul>
+		        </div>
+		 </div>
+		 <div class="right">
+		 	 <div class="sousuo">
+		 	 	<input type="text" value='搜索所有提醒' class="suo">
+		 	 </div>
+		 	 <div class='newlist'>
+		 	 	 <div class="newtitle" ng-style='{color:todo[index].col}'>{{todo[index].title}}
+		 	 	 	<div class="xuanxiang" ng-style='{color:todo[index].col}'  ng-click='getColor()'>
+		 	 	 		选项
+					    
+		 	 	 	</div>
+		 	 	 </div>
+		 	 	 
+		 	 	 	<div class='ywc' ng-click='sanjiao()'>
+		 	 	 		<div ng-class="{true:'sanjiao',false:'sanjiao2'}[flag]"></div>已完成<span>{{finum}}</span>项
+		 	 	 	</div>
+		 	 	 	<ul class="finished" ng-hide='flag'>
+		 	 	 	<div class="date">1217628176</div>
+		 	 	 	<li ng-repeat='v in todo[index].list|filter:done'>
+		 	 	 		<span class="cir" ng-style="{'border-color':todo[index].col}"  ng-click="v.done=!v.done">
+		 	 	 		<span class="c" ng-style='{background:todo[index].col}'></span>
+		 	 	 	   </span>{{v.content}}
+		 	 	 	</li>
+		 	 	   </ul>
+		 	 	 <ul class='add'>
+		 	 	 	<li ng-repeat='v in todo[index].list|filter:doing'>
+		 	 	 		<span class="cir" ng-style="{'border-color':todo[index].col}" ng-click="v.done=!v.done"></span>
+		 	 	 	    <input type="text" class="listcon" ng-model='v.content' >
+		 	 	 	</li>
+		 	 	 	<li ng-click='addList(index)'>
+		 	 	 		<span></span>
+		 	 	 		<div class="tishi">新增项目....</div>
+		 	 	 	</li>
+		 	 	 </ul>
+		 	 </div>
+		 	 <div class="colorbox" ng-hide='f'>
+					    	<div class="huaban">
+					    		<input type="text" ng-model='fontContent' ng-style='{color:fontColor}'>	
+					    		<p>列表颜色</p>
+					    		<ul >
+					    		  <li ng-repeat='v in color' ng-style="{'background-color':v,'border-color':v==fontColor?v:transparent}" ng-click="changColor($index)"></li>
+					    	    </ul>
+					    	    <div class="huabanbo">
+					    	    <span class="del" ng-click="del(index)">删除</span>
+					    	    <span class="cancle" ng-click='f=false'>取消 </span>
+					    	    <span class="finish" ng-click="finish()">完成</span>
+					    	    </div>
+					    	</div>
+			 </div>
+		 </div>
+	</div>
+</body>
+  <script>
+       var todo=[{id:0,title:"新建提醒1",col:"#F99600",list:[{content:"1111111",date:"123456",done:true},{content:"22222222",date:"123456",done:false},
+       {content:"33333333",date:"123456",done:false},{content:"1111111",date:"123456",done:true},{content:"1111111",date:"123456",done:true}]}]
+       var app=angular.module('app',[])
+       app.controller('cl',function($scope){
+       	     $scope.color=['#C96FE1','#6DDC31','#3FABF8','#F3CB00','#9F835D','#F72368','#F99600'];
+       	     $scope.todo=todo;
+       	     $scope.ids=0;
+       	     $scope.index=0;
+       	     $scope.add=function(){
+       	     	 $scope.f=true;
+       	     	 $scope.ids=$scope.todo.length+1
+                 var o={
+                 	 id:$scope.todo[$scope.todo.length-1].id+1,
+                 	 col:$scope.color[$scope.ids%7],
+                 	 title:'新建提醒'+$scope.ids,
+                 	 list:[{content:"asdasdasdsad",date:new Date(),done:false},]
+                 }
+                 $scope.todo.push(o);
+                 $scope.index=$scope.todo.length-1;
+                
+                 
+       	     }
+       	     console.log(todo[$scope.index])
+       	     $scope.done=function(val,index,arr){
+       	     	 return val.done==true?true:false;
+       	     }
+       	     $scope.doing=function(val,index,arr){
+       	     	 return val.done==false;
+       	     }
+       	     $scope.select=function(i){
+       	     	 $scope.f=true;
+                 $scope.flag=true;
+       	     	 $scope.index=i;
+       	     }
+       	     $scope.flag=true;
+       	     $scope.sanjiao=function(){
+       	       $scope.flag=!$scope.flag;
+
+       	     }
+       	     $scope.addList=function(i){
+       	     	 $scope.todo[i].list.push({
+                      content:"",
+                      date:new Date().getTime(),
+                      done:false,
+       	     	 })
+       	     }
+       	     
+       	     function getNum(){
+       	     	$scope.finum=0;
+       	     	for(var i=0;i<$scope.todo[$scope.index].list.length;i++){
+       	     		 var o=$scope.todo[$scope.index].list[i].done;
+       	     		 if(o==true){
+       	               $scope.finum++;
+       	     		 }
+       	     	}
+       	     }
+       	     getNum();
+       	     $scope.$watch("todo",function(now,old){
+       	     	  getNum()
+       	     },true)
+       	     $scope.$watch("index",function(now,old){
+       	     	  getNum()
+       	     },true)
+       	     $scope.f=true;
+       	     $scope.getColor=function(){
+       	     	 $scope.fontColor=$scope.todo[$scope.index].col;
+                 $scope.f=!$scope.f
+       	     	 $scope.fontContent=$scope.todo[$scope.index].title;
+       	     }
+
+             $scope.changColor=function(i){
+             	
+             	$scope.fontColor=$scope.color[i]
+                 
+             }
+             $scope.finish=function(){
+             	$scope.f=true
+                $scope.todo[$scope.index].col=$scope.fontColor;
+                $scope.todo[$scope.index].title=$scope.fontContent;
+             }
+             $scope.del=function(i){
+             	$scope.f=false
+             	$scope.todo.splice(i,1)
+             }
+
+       })
+  </script>
+</html>
